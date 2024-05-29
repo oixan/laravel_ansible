@@ -1,0 +1,7 @@
+[webservers]
+dev-webserver1.example.com
+dev-webserver2.example.com
+
+[dbservers]
+dev-dbserver1.example.com
+dev-dbserver2.example.com

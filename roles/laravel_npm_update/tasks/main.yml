@@ -1,0 +1,4 @@
+- name: Run npm update
+  ansible.builtin.command:
+    cmd: npm update
+    chdir: "{{ nginx_document_root }}"

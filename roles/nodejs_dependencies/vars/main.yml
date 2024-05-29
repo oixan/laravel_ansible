@@ -1,0 +1,6 @@
+packages:
+  debian:
+    - gcc
+    - g++
+    - make
+

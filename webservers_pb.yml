@@ -1,0 +1,14 @@
+---
+- name: Setup web servers
+  hosts: webservers
+  become: true
+  vars:
+    ansible_user: "root"
+  roles:
+    - common
+    - git
+    - php
+    - composer
+    - nginx
+    - laravel_folder_permissions
+    - nodejs

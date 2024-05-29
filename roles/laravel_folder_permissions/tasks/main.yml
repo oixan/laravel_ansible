@@ -1,0 +1,11 @@
+- name: Set correct ownership for Laravel
+  ansible.builtin.command:
+    cmd: chown -R www-data:www-data {{ nginx_document_root }}
+
+- name: Set correct permissions for Laravel files
+  ansible.builtin.command:
+    cmd: find {{ nginx_document_root }} -type f -exec chmod 644 {} \;
+
+- name: Set correct permissions for Laravel directories
+  ansible.builtin.command:
+    cmd: find {{ nginx_document_root }} -type d -exec chmod 755 {} \;

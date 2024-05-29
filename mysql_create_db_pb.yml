@@ -1,0 +1,8 @@
+---
+- name: Create mysql db on dbserver
+  hosts: dbservers
+  become: true
+  vars:
+    ansible_user: "root"
+  roles:
+    - mysql_create_db

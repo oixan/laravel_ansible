@@ -1,0 +1,75 @@
+---
+- name: Ensure apt cache is updated
+  apt:
+    update_cache: yes
+
+- name: Install Python MySQL module
+  apt:
+    name: python3-mysqldb
+    state: present
+    
+- name: Install MySQL server
+  apt:
+    name: "{{ mysql_packages }}"
+    state: present
+
+- name: Start and enable MySQL service
+  ansible.builtin.service:
+    name: mysql
+    state: started
+    enabled: yes
+
+- name: Ensure MySQL root password is set
+  mysql_user:
+    login_user: "{{ mysql_root_user }}"
+    login_password: ""
+    name: root
+    password: "{{ mysql_root_password }}"
+    host_all: yes
+    priv: "*.*:ALL,GRANT"
+  ignore_errors: true
+
+- name: Remove anonymous MySQL users
+  mysql_user:
+    login_user: "{{ mysql_root_user }}"
+    login_password: "{{ mysql_root_password }}"
+    name: ''
+    host_all: yes
+    state: absent
+
+- name: Remove the test database
+  mysql_db:
+    login_user: "{{ mysql_root_user }}"
+    login_password: "{{ mysql_root_password }}"
+    name: test
+    state: absent
+    force: yes
+
+- name: Reload MySQL privilege tables
+  mysql_user:
+    login_user: "{{ mysql_root_user }}"
+    login_password: "{{ mysql_root_password }}"
+    name: root
+    host_all: yes
+    priv: "*.*:ALL,GRANT"
+    state: present
+
+- name: Create a new MySQL user
+  mysql_user:
+    login_user: "{{ mysql_root_user }}"
+    login_password: "{{ mysql_root_password }}"
+    name: "{{ mysql_user }}"
+    password: "{{ mysql_user_password }}"
+    host: "{{ mysql_user_host }}"
+    priv: "*.*:ALL,GRANT"
+    state: present
+
+- name: Copy custom MySQL config
+  template:
+    src: my.cnf.j2
+    dest: /etc/mysql/my.cnf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart MySQL
+

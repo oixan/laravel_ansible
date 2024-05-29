@@ -1,0 +1,4 @@
+---
+# Include the installation tasks
+- include_tasks: addRootUser.yml
+- include_tasks: addPermissionToUser.yml

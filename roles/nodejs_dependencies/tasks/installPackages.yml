@@ -1,0 +1,7 @@
+- name: Install packages on Debian-based systems
+  apt:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ packages.get(ansible_os_family | lower) }}"
+  when: ansible_os_family == "Debian"
+

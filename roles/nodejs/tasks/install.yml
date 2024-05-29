@@ -1,0 +1,49 @@
+- name: Check if Node.js version is specified in group_vars
+  set_fact:
+    nodejs_version: "{{ nodejs_version | default(False) }}"
+  when: nodejs_version is not defined and ansible_os_family == 'Debian'
+
+- name: Install Node.js
+  block:
+    - name: Install Node.js using specified version
+      ansible.builtin.package:
+        name: "nodejs={{ nodejs_version }}"
+        state: present
+      when: nodejs_version and ansible_os_family == 'Debian'
+
+    - name: Install latest LTS version of Node.js
+      ansible.builtin.package:
+        name: nodejs
+        state: present
+      when: ansible_os_family == 'Debian'
+        
+- name: Verify Node.js installation
+  command: node --version
+  register: node_version_output
+  changed_when: false
+  failed_when: false
+  when: ansible_os_family == 'Debian'
+
+- name: Install npm
+  ansible.builtin.package:
+    name: npm
+    state: present
+  when: ansible_os_family == 'Debian'
+        
+- name: Verify npm installation
+  command: npm --version
+  register: npm_version_output
+  changed_when: false
+  failed_when: false
+  when: ansible_os_family == 'Debian'
+
+- name: Print Node.js version
+  debug:
+    msg: "Node.js version: {{ node_version_output.stdout }}"
+  when: node_version_output.stdout is defined and ansible_os_family == 'Debian'
+
+- name: Print npm version
+  debug:
+    msg: "npm version: {{ npm_version_output.stdout }}"
+  when: npm_version_output.stdout is defined and ansible_os_family == 'Debian'
+

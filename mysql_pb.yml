@@ -1,0 +1,9 @@
+---
+- name: Provisioning mysql on dbserver
+  hosts: dbservers
+  become: true
+  vars:
+    ansible_user: "root"
+  roles:
+    - mysql
+

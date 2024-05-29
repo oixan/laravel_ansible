@@ -1,0 +1,16 @@
+---
+- name: Setup web servers
+  hosts: webservers
+  become: true
+  vars:
+    ansible_user: "root"
+  roles:
+    - git_pull
+    - laravel_composer_update
+    - laravel_npm_update
+    - laravel_sys_link
+    - laravel_env
+    - laravel_folder_permissions
+    - laravel_migration
+
+

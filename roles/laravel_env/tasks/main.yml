@@ -1,0 +1,29 @@
+- name: Register .env file existence
+  ansible.builtin.stat:
+    path: "{{ nginx_document_root }}/.env"
+  register: env_file
+
+- name: Register .env.prod file existence
+  ansible.builtin.stat:
+    path: "{{ nginx_document_root }}/.env.prod"
+  register: env_prod_file
+
+- name: Register .env.example file existence
+  ansible.builtin.stat:
+    path: "{{ nginx_document_root }}/.env.example"
+  register: env_example_file
+
+- name: Rename .env.prod to .env if .env.prod exists
+  ansible.builtin.command:
+    cmd: mv "{{ nginx_document_root }}/.env.prod" "{{ nginx_document_root }}/.env"
+  when: 
+    - env_prod_file.stat.exists
+    - not env_file.stat.exists
+
+- name: Rename .env.example to .env if .env.prod does not exist and .env.example exists
+  ansible.builtin.command:
+    cmd: mv "{{ nginx_document_root }}/.env.example" "{{ nginx_document_root }}/.env"
+  when: 
+    - not env_prod_file.stat.exists
+    - env_example_file.stat.exists
+

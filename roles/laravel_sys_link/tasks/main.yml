@@ -1,0 +1,12 @@
+- name: Check if symbolic link exists
+  ansible.builtin.stat:
+    path: "{{ nginx_document_root }}/public/storage"
+  register: storage_link
+
+- name: Create symbolic link if it does not exist
+  ansible.builtin.file:
+    src: "{{ nginx_document_root }}/storage/app/public"
+    dest: "{{ nginx_document_root }}/public/storage"
+    state: link
+  when: not storage_link.stat.islnk | default(false)
+

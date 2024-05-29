@@ -1,0 +1,19 @@
+- name: Install PHP extensions required by Composer
+  shell: "php{{ php_version }} /usr/local/bin/composer require ext-curl ext-xml ext-dom"
+  args:
+    chdir: "{{ nginx_document_root }}"
+  become: yes
+  environment:
+    COMPOSER_NO_INTERACTION: "1"
+    COMPOSER_ALLOW_SUPERUSER: "1"
+  ignore_errors: yes
+     
+- name: Run composer update
+  ansible.builtin.command:
+    cmd: php{{ php_version }} /usr/local/bin/composer update
+    chdir: "{{ nginx_document_root }}" 
+  environment:
+    COMPOSER_NO_INTERACTION: "1"
+    COMPOSER_ALLOW_SUPERUSER: "1"
+
+

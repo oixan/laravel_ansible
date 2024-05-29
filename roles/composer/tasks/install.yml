@@ -1,0 +1,23 @@
+---
+- name: Download Composer installer
+  get_url:
+    url: https://getcomposer.org/installer
+    dest: /tmp/composer-setup.php
+    mode: '0755'
+
+- name: Verify installer signature
+  ansible.builtin.shell: >
+    HASH=$(curl -s https://composer.github.io/installer.sig);
+    php -r "if (hash_file('SHA384', '/tmp/composer-setup.php') === '$HASH') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('/tmp/composer-setup.php'); } echo PHP_EOL;"
+  register: verify_composer
+  changed_when: "'Installer verified' not in verify_composer.stdout"
+
+- name: Install Composer globally
+  ansible.builtin.command: php /tmp/composer-setup.php --install-dir=/usr/local/bin --filename=composer
+  args:
+    creates: /usr/local/bin/composer
+
+- name: Remove Composer installer
+  file:
+    path: /tmp/composer-setup.php
+    state: absent

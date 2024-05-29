@@ -1,0 +1,6 @@
+- name: Ensure to run Laravel migration
+  ansible.builtin.shell: |
+    php{{php_version}} artisan migrate --force
+  args:
+    chdir: "{{ nginx_document_root }}"
+  become: yes

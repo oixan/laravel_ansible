@@ -1,0 +1,55 @@
+---
+- name: Install Nginx
+  ansible.builtin.package:
+    name: nginx
+    state: present
+
+- name: Copy Laravel Nginx configuration
+  ansible.builtin.template:
+    src: laravel.conf.j2
+    dest: /etc/nginx/sites-available/laravel
+  notify: Reload Nginx
+
+- name: Enable Laravel site
+  ansible.builtin.file:
+    src: /etc/nginx/sites-available/laravel
+    dest: /etc/nginx/sites-enabled/laravel
+    state: link
+  notify: Reload Nginx
+
+- name: Remove default Nginx site
+  ansible.builtin.file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: Reload Nginx
+  
+- name: Ensure UFW is installed
+  ansible.builtin.package:
+    name: ufw
+    state: present
+
+- name: Allow HTTP traffic on port 80
+  ansible.builtin.ufw:
+    rule: allow
+    port: 80
+    proto: tcp
+
+- name: Check if UFW is already enabled
+  ansible.builtin.shell:
+    cmd: "ufw status | grep -q 'Status: active'"
+  register: ufw_status
+  ignore_errors: true
+
+- name: Enable UFW if not already enabled
+  ansible.builtin.command:
+    cmd: ufw enable
+  when: ufw_status.rc != 0
+
+- name: Ensure Nginx is started and enabled
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes
+
+
+

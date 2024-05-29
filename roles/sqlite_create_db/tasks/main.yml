@@ -1,0 +1,33 @@
+---
+- name: Ensure the directory for the SQLite database exists
+  ansible.builtin.file:
+    path: "/var/www/db/sqlite"
+    state: directory
+    owner: "www-data"
+    group: "www-data"
+    mode: '0755'
+
+- name: Create SQLite database
+  ansible.builtin.command: "sqlite3 /var/www/db/sqlite/{{ sqlite_db_name }} '.databases'"
+  args:
+    creates: "/var/www/db/sqlite/{{ sqlite_db_name }}"
+    
+- name: Verify database creation
+  ansible.builtin.stat:
+    path: "/var/www/db/sqlite/{{ sqlite_db_name }}"
+  register: db_file
+  
+  
+- name: Change ownership of SQLite database file
+  ansible.builtin.file:
+    path: "/var/www/db/sqlite/{{ sqlite_db_name }}"
+    owner: "www-data"
+    group: "www-data"
+    state: file
+  when: db_file.stat.exists
+
+
+- name: Debug SQLite database creation
+  ansible.builtin.debug:
+    msg: "SQLite database /var/www/db/sqlite/{{ sqlite_db_name }} was created: {{ db_file.stat.exists }}"
+

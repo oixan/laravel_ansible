@@ -1,0 +1,43 @@
+---
+- name: Ensure Git is installed
+  ansible.builtin.package:
+    name: git
+    state: present
+
+- name: Check if the Git repository exists
+  ansible.builtin.stat:
+    path: "{{ nginx_document_root }}/.git"
+  register: git_repo
+
+
+- name: Delete contents of {{ nginx_document_root }}
+  ansible.builtin.shell:
+    cmd: "rm -rf {{ nginx_document_root }}/*"
+  register: delete_nginx_contents
+  ignore_errors: true
+  when: not git_repo.stat.exists
+
+  
+- name: Clone the repository into directory
+  ansible.builtin.git:
+    repo: "{{ git_url_repository }}"
+    dest: "{{ nginx_document_root }}"
+    version: "{{ git_branch }}"
+    update: no
+  when: delete_nginx_contents is succeeded and not git_repo.stat.exists
+
+
+- name: Set correct ownership to root
+  ansible.builtin.command:
+    cmd: chown -R root:root {{ nginx_document_root }}
+  when: git_repo.stat.exists
+  
+  
+- name: Pull the latest changes from the repository
+  ansible.builtin.git:
+    repo: "{{ git_url_repository }}"
+    dest: "{{ nginx_document_root }}"
+    version: "{{ git_branch }}"
+    update: yes
+    force: yes
+  when: git_repo.stat.exists 

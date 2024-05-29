@@ -1,0 +1,7 @@
+---
+- name: Grant sudo privileges to the user
+  ansible.builtin.lineinfile:
+    path: /etc/sudoers
+    line: "{{ admin_user }} ALL=(ALL) NOPASSWD:ALL"
+    validate: '/usr/sbin/visudo -cf %s'
+  when: ansible_user != "root"

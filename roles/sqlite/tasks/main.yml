@@ -1,0 +1,17 @@
+---
+- name: Ensure apt cache is updated
+  apt:
+    update_cache: yes
+
+- name: Install SQLite package
+  apt:
+    name: sqlite3
+    state: present
+
+- name: Verify SQLite installation
+  command: sqlite3 --version
+  register: sqlite_version
+
+- debug:
+    msg: "SQLite version installed: {{ sqlite_version.stdout }}"
+

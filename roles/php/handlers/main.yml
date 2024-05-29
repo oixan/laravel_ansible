@@ -1,0 +1,8 @@
+---
+# Handlers to restart PHP-FPM service if necessary
+- name: restart php-fpm on Debian-based systems
+  service:
+    name: php{{ php_version }}-fpm
+    state: restarted
+  when: ansible_os_family == "Debian"
+

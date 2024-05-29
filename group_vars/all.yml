@@ -1,0 +1,41 @@
+# ADMIN USER
+admin_user: admin
+admin_user_password: 123456
+
+# PARAMS
+
+# php
+php_version: "8.2"
+
+# nodejs
+nodejs_version:
+
+# nginx
+nginx_domain_name:  # 111.111.111.111 - domain.it
+nginx_document_root: /var/www/html
+
+
+# git
+git_user: user
+git_repository: repository
+git_token: token_123456789
+git_url_repository: 'https://{{git_user}}:{{git_token}}@github.com/{{git_user}}/{{git_repository}}.git'
+git_branch: main
+
+
+
+#sqlite
+sqlite_db_name: mydatabase.db
+
+
+#mysql
+mysql_packages: mysql-server   # MySQL package to install
+mysql_root_user: root
+mysql_root_password: rootPassword   # Password for the MySQL root user
+mysql_user: user   # Name of the MySQL user to create
+mysql_user_password: userPassword   # Password for the MySQL user
+mysql_user_host: "%"   # Host for the MySQL user
+
+
+mysql_database: mydatabase
+
